@@ -89,7 +89,7 @@ const userSchema = new mongoose.Schema(
 
     passwordChangeAt: Date,
     passwordResetToken: String,
-    passwordResetExpires: Date,
+    passwordResetTokenExpires: Date,
 
     active:{
         type: Boolean,
@@ -135,6 +135,17 @@ userSchema.methods.createAccountVerificationToken = async function(){
     this.accountVerificationTokenExpires = Date.now() + 30 * 60 * 1000; //10 minutes
     return verificationToken;
 };
+
+//password reset token
+userSchema.methods.createPasswordResetToken = async function(){
+    //create token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    //hash token and save to db
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    //verification token expiration
+    this.passwordResetTokenExpires = Date.now() + 30 * 60 * 1000; //10 minutes
+    return resetToken;
+}
 
 //compile schema into model
 const User = mongoose.model('User', userSchema);

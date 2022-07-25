@@ -13,7 +13,9 @@ const {
     banUserController,
     unbanUserController,
     generateVerificationTokenController,
-    accountVerificationController
+    accountVerificationController,
+    generatePasswordResetTokenController,
+    passwordResetController
 } = require("../../controllers/users/usersController");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
 const userRoute = express.Router();
@@ -23,6 +25,8 @@ const userRoute = express.Router();
 userRoute.post('/register', userRegisterController);
 userRoute.post('/login', userLoginController);
 userRoute.get('/', authMiddleware, userFetchController);
+userRoute.put('/reset-password', authMiddleware, passwordResetController);
+userRoute.post('/generate-password-reset-token', authMiddleware, generatePasswordResetTokenController);
 userRoute.put('/password', authMiddleware, updateUserPasswordController);
 userRoute.put('/follow', authMiddleware, followingUserController);
 userRoute.put('/unfollow', authMiddleware, unfollowUserController);

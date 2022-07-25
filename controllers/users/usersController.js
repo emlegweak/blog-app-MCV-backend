@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const generateToken = require("../../config/token/generateToken");
 const validateMongoDbId = require("../../utils/validateMongoDBID")
 const User = require("../../model/user/User");
+const { ServerResponse } = require("http");
 
 dotenv.config();
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
@@ -332,7 +333,7 @@ const accountVerificationController = expressAsyncHandler(async(req,res) =>{
         accountVerificationTokenExpires: {$gt: new Date ()},
     });
     if(!userFound){
-        throw new Error("Token expired, please try again.");
+        throw new Error("User not found, please try again.");
     };
     //update the isAccountVerified property to true
     userFound.isAccountVerified = true;
@@ -348,14 +349,57 @@ generate password reset token
 =======================
 */
 
-
-
+const generatePasswordResetTokenController = expressAsyncHandler(async(req,res) =>{
+    //find user by email 
+    const {email} = req.body;
+    const user = await User.findOne({email});
+    if(!user){
+        throw new Error("User not found, please try again.");
+    };
+    try{
+        //create token
+        const passwordResetToken = await user.createPasswordResetToken();
+        console.log(passwordResetToken);
+        //save user instance
+        await user.save();
+        //generate email message to user
+        const resetURL = `If you requested a password reset, please reset within 10 minutes of receiving this email. Otherwise, please ignore this message. <a href="http://localhost:3000/reset-password/${passwordResetToken}">Click here to reset password</a>`;
+        const msg = {
+            to: email,
+            from: "emilythearmstrong@gmail.com",
+            subject: "Reset your password",
+            html: resetURL,
+        };
+        await sgMail.send(msg);
+        res.json({msg: `A verification message has been successfully sent to ${user?.email} : ${resetURL}`,});
+    }catch(error){
+        res.json(error);
+    }
+});
 
 /*
 =======================
 password reset
 =======================
 */
+const passwordResetController = expressAsyncHandler(async(req,res) =>{
+    const { token, password } = req.body;
+    const hashedToken = crypto.createHash('sha256').update(token).digest("hex");
+    //find user by token
+    const userFound = await User.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetTokenExpires: { $gt: Date.now() },
+    });
+    if (!userFound) {
+        throw new Error("User not found, please try again.");
+    };
+    //update db 
+    userFound.password = password;
+    userFound.passwordResetToken = undefined;
+    userFound.passwordResetTokenExpires = undefined;
+    await userFound.save();
+    res.json(userFound);
+}); 
 
 
 module.exports = {
@@ -372,5 +416,7 @@ module.exports = {
     banUserController,
     unbanUserController,
     generateVerificationTokenController,
-    accountVerificationController
+    accountVerificationController,
+    generatePasswordResetTokenController,
+    passwordResetController
 };
