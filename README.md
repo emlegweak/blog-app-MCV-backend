@@ -1,3 +1,16 @@
+100hours passion project
+
+Tech stack-
+-javascript
+-express.js
+-node.js
+-mongoDB => mongoose
+-bcrypt.js (encryption)
+-express-async-handler
+-nodemon (dev)
+-jwt (jsonwebtoken - authorization)
+-crypto (web token  - user account auth)
+
 Features of the Post API -
 
 -create, read, update, delete (crud operations)
@@ -15,9 +28,8 @@ Features of the Users API-
 -authentication (login/logout, allowing user to -access certain route based on user mgmt role)
 -data modeling
 -limit number of requests per user
--toggle like/dislike of post endpoint
 -user management(admin blocking a user, assigning role to a user)
--block a user
+-ban a user
 -user profile page (username, # of followers, posts)
 -users can view other profile
 -update profile
@@ -31,20 +43,10 @@ Features of the Users API-
 -follow/unfollow user
 -user can view other profiles
 -who can view my profile
--profanity filter - automatic block of account
+-profanity filter - automatic ban of account
 -make posts public/private
 -make user profile private for only logged in users
 
-Tech stack-
--javascript
--express.js
--node.js
--mongoDB => mongoose
--bcrypt.js (encryption)
--express-async-handler
--nodemon (dev)
--jwt (jsonwebtoken - authorization)
--crypto (web token  - user account auth)
 
 data modeling- 
 -users
