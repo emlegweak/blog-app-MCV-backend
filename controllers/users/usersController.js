@@ -5,7 +5,7 @@ const crypto = require("crypto");
 const generateToken = require("../../config/token/generateToken");
 const validateMongoDbId = require("../../utils/validateMongoDBID")
 const User = require("../../model/user/User");
-const { ServerResponse } = require("http");
+const cloudinaryUploadImage = require("../../utils/cloudinary");
 
 dotenv.config();
 sgMail.setApiKey(process.env.SEND_GRID_API_KEY);
@@ -204,7 +204,7 @@ const followingUserController = expressAsyncHandler(async(req,res) =>{
     );
 
     if (alreadyFollowing) throw new Error("You have already followed this user");
-    //1. Find the user you want to follow and update it's followers field
+    //find the user you want to follow and update its followers field
     await User.findByIdAndUpdate(
         followId,
         {
@@ -213,7 +213,7 @@ const followingUserController = expressAsyncHandler(async(req,res) =>{
         },
         { new: true }
     );
-    //2. Update the login user following field
+    //update following field of the logged-in user
     await User.findByIdAndUpdate(
         loginUserId,
         {
@@ -359,7 +359,6 @@ const generatePasswordResetTokenController = expressAsyncHandler(async(req,res) 
     try{
         //create token
         const passwordResetToken = await user.createPasswordResetToken();
-        console.log(passwordResetToken);
         //save user instance
         await user.save();
         //generate email message to user
@@ -401,6 +400,25 @@ const passwordResetController = expressAsyncHandler(async(req,res) =>{
     res.json(userFound);
 }); 
 
+/*
+=======================
+upload profile photo 
+=======================
+*/
+
+const profilePhotoUploadController = expressAsyncHandler(async(req,res) =>{
+    //find the logged-in user
+    const {_id} = req.user;
+
+    //get path to image to upload to cloudinary
+    const localPath = `public/images/profile/${req.file.filename}`;
+    //upload to cloudinary
+    const uploadedImage = await cloudinaryUploadImage(localPath);
+    const foundUser = await User.findByIdAndUpdate(_id, {
+        profilePhoto:uploadedImage?.url,
+    }, {new:true});
+    res.json(foundUser);
+});
 
 module.exports = {
     userRegisterController,
@@ -418,5 +436,6 @@ module.exports = {
     generateVerificationTokenController,
     accountVerificationController,
     generatePasswordResetTokenController,
-    passwordResetController
+    passwordResetController,
+    profilePhotoUploadController
 };

@@ -6,10 +6,13 @@ Tech stack-
 -node.js
 -mongoDB => mongoose
 -bcrypt.js (encryption)
--express-async-handler
+-express-async-handler (error handling)
 -nodemon (dev)
 -jwt (jsonwebtoken - authorization)
 -crypto (web token  - user account auth)
+-cloudinary (file upload)
+-multer (configure incoming form data - file type, size)
+-sharp (resize images)
 
 Features of the Post API -
 

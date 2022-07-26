@@ -15,15 +15,18 @@ const {
     generateVerificationTokenController,
     accountVerificationController,
     generatePasswordResetTokenController,
-    passwordResetController
+    passwordResetController,
+    profilePhotoUploadController
 } = require("../../controllers/users/usersController");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
+const { photoUpload, profilePhotoResize } = require("../../middlewares/uploads/profilePhotoUpload");
 const userRoute = express.Router();
 
 //Register
 //appends routes to the parent in server.js
 userRoute.post('/register', userRegisterController);
 userRoute.post('/login', userLoginController);
+userRoute.put('/upload-profile-photo', authMiddleware, photoUpload.single('image'), profilePhotoResize, profilePhotoUploadController);
 userRoute.get('/', authMiddleware, userFetchController);
 userRoute.put('/reset-password', authMiddleware, passwordResetController);
 userRoute.post('/generate-password-reset-token', authMiddleware, generatePasswordResetTokenController);
