@@ -1,4 +1,3 @@
-100hours passion project
 
 Tech stack-
 -javascript
