@@ -19,7 +19,7 @@ const {
     profilePhotoUploadController
 } = require("../../controllers/users/usersController");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
-const { photoUpload, profilePhotoResize } = require("../../middlewares/uploads/profilePhotoUpload");
+const { photoUpload, profilePhotoResize } = require("../../middlewares/uploads/photoUpload");
 const userRoute = express.Router();
 
 //Register

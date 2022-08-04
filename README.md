@@ -13,6 +13,7 @@ Tech stack-
 -cloudinary (file upload)
 -multer (configure incoming form data - file type, size)
 -sharp (resize images)
+-bad-words npm (profanity filter)
 
 Features of the Post API -
 

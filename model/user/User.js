@@ -2,7 +2,7 @@ const mongoose=require('mongoose');
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-//create schema
+//create schema - blueprint of user instance
 const userSchema = new mongoose.Schema(
     {
     firstName: {

@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const dbConnect=require("./config/db/dbConnect");
 const {userRegisterController} = require('./controllers/users/usersController')
 const userRoute = require("./route/users/userRoute");
+const postRoute = require("./route/posts/postRoute");
 const {errorHandler,notFoundError} = require("./middlewares/error/errorHandler");
 const app = express();
 dotenv.config();
@@ -16,6 +17,8 @@ app.use(express.json());
 //User Route
 app.use('/api/users', userRoute);
 
+//Post Route
+app.use('/api/posts', postRoute);
 
 //error handler - call AFTER ALL ROUTES
 app.use(notFoundError);

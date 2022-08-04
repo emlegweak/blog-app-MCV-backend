@@ -23,7 +23,7 @@ const photoUpload = multer({
     limits: { fileSize: 1000000 },
 });
 
-//image resizing
+//profile image resizing
 const profilePhotoResize = async(req,res,next) =>{
     //check if there is a file
     if(!req.file){
@@ -36,4 +36,17 @@ const profilePhotoResize = async(req,res,next) =>{
     next();
 };
 
-module.exports = { photoUpload, profilePhotoResize };
+//postimage resizing
+const postPhotoResize = async (req, res, next) => {
+    //check if there is a file
+    if (!req.file) {
+        return next();
+    };
+    //generate unique filename property
+    req.file.filename = `user-${Date.now()}-${req.file.originalname}`;
+    //resize image and format, set quality, set destination of saved img
+    await sharp(req.file.buffer).resize(500, 500).toFormat('jpeg').jpeg({ quality: 90 }).toFile(path.join(`public/images/posts/${req.file.filename}`));
+    next();
+};
+
+module.exports = { photoUpload, profilePhotoResize, postPhotoResize };
